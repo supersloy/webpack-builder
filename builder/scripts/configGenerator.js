@@ -9,7 +9,7 @@ const InterpolateHtmlPlugin = require('./InterpolateHtmlPlugin');
 
 // This is the production and development configuration.
 // It is focused on developer experience, fast rebuilds, and a minimal bundle.
-module.exports = function (webpackEnv, publicPath = '') {
+module.exports = function (webpackEnv, publicPath = paths.output) {
   const isEnvDevelopment = webpackEnv === 'development';
   const isEnvProduction = webpackEnv === 'production';
 
@@ -81,7 +81,7 @@ module.exports = function (webpackEnv, publicPath = '') {
         {
           test: /\.css$/,
           use: [
-            isEnvProduction && MiniCssExtractPlugin.loader,
+            isEnvProduction ? MiniCssExtractPlugin.loader : 'style-loader',
             {
               loader: 'css-loader',
               options: {
@@ -95,7 +95,7 @@ module.exports = function (webpackEnv, publicPath = '') {
         {
           test: /\.css$/,
           use: [
-            isEnvProduction && MiniCssExtractPlugin.loader,
+            isEnvProduction ? MiniCssExtractPlugin.loader : 'style-loader',
             {
               loader: 'css-loader',
               options: {
@@ -110,7 +110,8 @@ module.exports = function (webpackEnv, publicPath = '') {
         {
           test: /\.scss$/,
           use: [
-            isEnvProduction && MiniCssExtractPlugin.loader,
+            isEnvProduction ? MiniCssExtractPlugin.loader : 'style-loader',
+            //'style-loader',
             'css-loader',
             'sass-loader'
           ].filter(Boolean),
@@ -119,7 +120,8 @@ module.exports = function (webpackEnv, publicPath = '') {
         {
           test: /\.scss$/,
           use: [
-            isEnvProduction && MiniCssExtractPlugin.loader,
+            isEnvProduction ? MiniCssExtractPlugin.loader : 'style-loader',
+            //'style-loader',
             {
               loader: 'css-loader',
               options: {
