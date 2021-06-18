@@ -7,7 +7,7 @@
   "author": "",
   "license": "ISC",
   "scripts": {
-    "clean": "rm dist/bundle.js",
+    "clean": "rimraf dist",
     "build-dev": "example-builder -b --mode development",
     "build-prod": "example-builder -b --mode production",
     "start": "example-builder --dev"
@@ -17,6 +17,10 @@
     "react-dom": "^17.0.2"
   },
   "devDependencies": {
-    "builder": "./builder"
+    "@types/react": "^17.0.11",
+    "@types/react-dom": "^17.0.8",
+    "builder": "./builder",
+    "react-hot-loader": "^4.13.0",
+    "rimraf": "^3.0.2"
   }
 }
