@@ -8,13 +8,15 @@
   "license": "ISC",
   "scripts": {
     "clean": "rm dist/bundle.js",
-    "build-dev": "node ./builder/bin/cli -b --mode development",
-    "build-prod": "node ./builder/bin/cli -b --mode production",
-    "start": "node ./builder/bin/cli --dev"
+    "build-dev": "example-builder -b --mode development",
+    "build-prod": "example-builder -b --mode production",
+    "start": "example-builder --dev"
   },
   "dependencies": {
     "react": "^17.0.2",
     "react-dom": "^17.0.2"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "builder": "./builder"
+  }
 }

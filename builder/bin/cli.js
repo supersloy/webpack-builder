@@ -2,6 +2,8 @@
 const { Command } = require('commander');
 const webpack = require('webpack');
 const program = new Command();
+const chalk = require('react-dev-utils/chalk');
+const formatWebpackMessages = require('react-dev-utils/formatWebpackMessages');
 
 // Makes the script crash on unhandled rejections instead of silently
 // ignoring them. In the future, promise rejections that are not handled will
@@ -41,7 +43,15 @@ if (options.build) {
         if (!err.message) {
           return reject(err);
         }
+
+        let errMessage = err.message;
+
+        reject(formatWebpackMessages({
+          errors: [errMessage],
+          warnings: [],
+        }));
       }
+
       return resolve();
     });
   })

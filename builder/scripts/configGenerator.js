@@ -4,7 +4,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const getClientEnvironment = require("./env");
 const paths = require("./paths");
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
-// const InterpolateHtmlPlugin = require('./InterpolateHtmlPlugin');
+const InterpolateHtmlPlugin = require('./InterpolateHtmlPlugin');
 
 
 // This is the production and development configuration.
@@ -40,9 +40,43 @@ module.exports = function (webpackEnv, publicPath = '') {
     module: {
       rules: [
         {
-          test: /\.(js|jsx)$/,
-          use: 'babel-loader',
-          exclude: /node_modules/
+          test: /\.(js|mjs|jsx|ts|tsx)$/,
+          exclude: /node_modules/,
+          loader: require.resolve('babel-loader'),
+          options: {
+            presets: [
+              [
+                '@babel/preset-env',
+                {
+                  targets: {
+                    esmodules: true,
+                  },
+                },
+              ],
+              '@babel/preset-react',
+              '@babel/preset-typescript',
+            ],
+            plugins: [
+              [
+                'babel-plugin-named-asset-import',
+                {
+                  loaderMap: {
+                    svg: {
+                      ReactComponent: '@svgr/webpack?-svgo,+titleProp,+ref![path]',
+                    },
+                  },
+                },
+              ],
+              isEnvDevelopment && require.resolve('react-hot-loader/babel'),
+            ].filter(Boolean),
+            // This is a feature of `babel-loader` for webpack (not Babel itself).
+            // It enables caching results in ./node_modules/.cache/babel-loader/
+            // directory for faster rebuilds.
+            cacheDirectory: true,
+            // See #6846 for context on why cacheCompression is disabled
+            cacheCompression: false,
+            compact: isEnvProduction,
+          },
         },
         {
           test: /\.css$/,
@@ -57,11 +91,6 @@ module.exports = function (webpackEnv, publicPath = '') {
             'postcss-loader'
           ].filter(Boolean),
           exclude: /\.module\.css$/
-        },
-        {
-          test: /\.ts(x)?$/,
-          loader: 'ts-loader',
-          exclude: /node_modules/
         },
         {
           test: /\.css$/,
@@ -115,8 +144,8 @@ module.exports = function (webpackEnv, publicPath = '') {
         },
         {
           test: /\.svg$/,
-          use: 'file-loader'
-        }
+          use: ['@svgr/webpack'],
+        },
       ]
     },
     resolve: {
@@ -160,7 +189,7 @@ module.exports = function (webpackEnv, publicPath = '') {
             : undefined
         )
       ),
-      // new InterpolateHtmlPlugin(HtmlWebpackPlugin, env.raw),
+      new InterpolateHtmlPlugin(HtmlWebpackPlugin, env.raw),
       new webpack.DefinePlugin(env.stringified),
       isEnvProduction && new MiniCssExtractPlugin(),
       new CleanWebpackPlugin()
