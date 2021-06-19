@@ -10,5 +10,6 @@ module.exports = {
   entryPoint: resolveApp('src/index.tsx'),
   indexHTML: resolveApp('src/index.html'),
   output: resolveApp('dist'),
+  outputIndexHTML: resolveApp('dist/index.html'),
   resolveApp,
 };

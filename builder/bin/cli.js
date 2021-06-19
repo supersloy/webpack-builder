@@ -19,11 +19,9 @@ program
   .option("-d, --dev", "Start a development server")
   .option("-b, --build", "Build a production bundle")
   .option("--public", "Prefix for public assets", "")
-  .option(
-    "-m, --mode <type>",
-    "Mode (development / production)",
-    "development"
-  );
+  .option("-m, --mode <type>", "Mode (development / production)", "development")
+  .option("-ob --openbrowser", "Open browser tab with the result")
+  .option("-p --port <port>", "Port of the development server", 5000);
 
 program.parse(process.argv);
 
@@ -67,19 +65,32 @@ if (options.build) {
       return resolve();
     });
   })
-    .then(() => console.log("Compiled successfully"))
+    .then(() => {
+      console.log("Compiled successfully");
+      if (options.openbrowser) {
+        openBrowser(paths.outputIndexHTML);
+      }
+    })
     .catch((err) => console.error(err));
 }
 if (options.dev) {
   console.log("Starting development server...");
+  const config = configGenerator(process.env.NODE_ENV, options.public);
 
-  const options = {
+  const compiler = webpack(config);
+
+  const serverOptions = {
     contentBase: paths.output,
     hot: true,
     host: "localhost",
   };
-  const server = new webpackDevServer(compiler, options);
-  server.listen(5000, "localhost", () => {
-    console.log("dev server listening on port 5000");
+
+  const server = new webpackDevServer(compiler, serverOptions);
+
+  server.listen(parseInt(options.port), "localhost", () => {
+    console.log(`dev server listening on port ${options.port}`);
+    if (options.openbrowser) {
+      openBrowser(`http://localhost:${options.port}`);
+    }
   });
 }
